@@ -1,0 +1,19 @@
+server:
+  port: 8082
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://localhost:8080/stretch/eureka/
+  instance:
+    prefer-ip-address: true
+    appname: springcloud-turbine-dashboard
+turbine:
+  aggregator:
+    clusterConfig: default
+  appConfig: account,ribbon
+  clusterNameExpression: "'default'"
+spring:
+  application:
+    name: monitor

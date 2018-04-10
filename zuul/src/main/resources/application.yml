@@ -1,0 +1,20 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/stretch/eureka/
+  instance:
+      preferIpAddress: true
+      instance-id: ${spring.cloud.client.ipAddress}:${server.port} #服务注册后的自定义名称
+server:
+  port: 8084
+zuul:
+  routes:
+    api-a:
+      path: /api-a/**
+      serviceId: ribbon
+spring:
+  application:
+    name: zuul
+  cloud:
+      client:
+        ipAddress: localhost
