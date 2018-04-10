@@ -6,7 +6,13 @@ eureka:
   instance:
     hostname: localhost
   client:
+    healthcheck:
+      enabled: true    #开启健康检查
     register-with-eureka: false
     fetch-registry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/stretch/registry/eureka/  #其实就是 http://localhost:8080/eureka/
+  server:
+    # 关闭自我保护
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000

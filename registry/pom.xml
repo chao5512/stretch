@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>registry</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<dependencies>
 		<dependency>
