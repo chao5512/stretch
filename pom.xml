@@ -44,7 +44,6 @@
         <module>zuul</module>
         <module>feign</module>
         <module>monitor</module>
-        <module>client</module>
     </modules>
 
 	<dependencyManagement>
