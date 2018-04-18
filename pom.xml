@@ -44,6 +44,8 @@
         <module>zuul</module>
         <module>feign</module>
         <module>monitor</module>
+		<module>gateway</module>
+        <module>oauthserver</module>
     </modules>
 
 	<dependencyManagement>

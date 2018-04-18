@@ -1,17 +1,19 @@
 server:
-  port: 8087
+  port: 8089
   servlet:
-    context-path: /stretch
+    context-path: /uaa
 eureka:
   client:
     serviceUrl:
       defaultZone: http://172.16.81.16:8080/stretch/eureka/
   instance:
-      preferIpAddress: true
-      instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    hostname: 172.16.81.16
 spring:
   cloud:
     client:
       ipAddress: 172.16.81.16
   application:
-    name: account
+    name: oauth2
+
+
+

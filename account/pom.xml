@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>account</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>Account Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <dependencies>
