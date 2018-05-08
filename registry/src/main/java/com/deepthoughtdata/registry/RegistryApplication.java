@@ -1,3 +1,4 @@
+
 package com.deepthoughtdata.registry;
 
 import org.springframework.boot.SpringApplication;
