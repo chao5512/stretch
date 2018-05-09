@@ -24,11 +24,13 @@ public interface UserService {
     public User findByUsername(String username);
 
     //邮件发送服务
-    public void userValidate(User user, String code);
+    public void userValidate(User user, String link);
 
     public User findByToken(String code);
 
     public int modifyByToken(String token, Long status);
 
-    public User findByUsernameAndPassword(String username, String password);
+    public User findByEmailAndPassword(String email, String password);
+
+    public int modifyByEmailAndPassword(String email, String password);
 }

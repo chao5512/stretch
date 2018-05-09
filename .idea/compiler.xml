@@ -23,7 +23,7 @@
       <module name="registry" target="1.8" />
       <module name="ribbon" target="1.8" />
       <module name="stretch" target="1.8" />
-      <module name="zuul" target="1.5" />
+      <module name="zuul" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
