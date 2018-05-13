@@ -13,10 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -147,6 +150,28 @@ public class UserContoller {
             return ResultUtil.error(-1, "该用户不存在！");
         }
         userService.modifyByEmailAndPassword(user.getEmail(), user.getPassword());
+        return ResultUtil.success();
+    }
+
+    /**
+     * 功能描述:图片上传
+     * @param file
+     * @param userId
+     * @return: com.deepthoughtdata.vo.Result
+     * @auther: 王培文
+     * @date: 2018/5/13 16:19
+     */
+    @RequestMapping("/upload")
+    public Result uploadImage(@RequestParam("file")MultipartFile file,String userId){
+        try {
+            User user = new User();
+            long id = Long.parseLong(userId);
+            user.setId(id);
+            userService.fileUpload(file,user);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1,"图片上传失败");
+        }
         return ResultUtil.success();
     }
 
