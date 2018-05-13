@@ -34,8 +34,6 @@ public interface UserService {
 
     public int modifyByToken(String token, Long status);
 
-    public User findByUsernameAndPassword(String username, String password);
-
     /**
      * 功能描述: 文件上传
      *

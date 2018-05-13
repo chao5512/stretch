@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
             helper.setText(strText, true);
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            logger.error("发送邮件失败：User:" + JSONObject.toJSONString(user) + ", mailcode: " + code);
+            logger.error("发送邮件失败：User:" + JSONObject.toJSONString(user));
         }
 
     }
