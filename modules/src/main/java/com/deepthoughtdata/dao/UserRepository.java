@@ -30,4 +30,5 @@ public interface  UserRepository extends JpaRepository<User, Long> {
     int modifyByTokenAndStatus(String  token, Long status);
 
     User findByUsernameAndPassword(String username, String password);
+
 }

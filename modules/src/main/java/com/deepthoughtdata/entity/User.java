@@ -25,6 +25,19 @@ public class User implements Serializable {
   @Column(nullable = false)
   private Long regtime;
 
+  //用户头像路径
+  @Column(nullable = true)
+  public String getImagePath() {
+    return imagePath;
+  }
+
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+  }
+
+  @Column(nullable = true)
+  private String imagePath;
+
   public Long getId() {
     return id;
   }

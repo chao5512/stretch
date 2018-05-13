@@ -1,8 +1,11 @@
 package com.deepthoughtdata;
 
+import com.deepthoughtdata.util.UploadConfigUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
+import org.springframework.context.annotation.Import;
+//springboot加载UploadUtil工具类
+@Import({UploadConfigUtil.class})
 @SpringBootApplication
 public class UserApplication {
 

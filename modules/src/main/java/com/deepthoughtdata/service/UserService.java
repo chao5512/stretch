@@ -4,6 +4,10 @@ import com.deepthoughtdata.dao.UserRepository;
 import com.deepthoughtdata.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @Author: jaysyd
@@ -31,4 +35,14 @@ public interface UserService {
     public int modifyByToken(String token, Long status);
 
     public User findByUsernameAndPassword(String username, String password);
+
+    /**
+     * 功能描述: 文件上传
+     *
+     * @param: [file, user]
+     * @return: void
+     * @auther: 王培文
+     * @date: 2018/5/10 19:27
+     */
+    public void fileUpload(MultipartFile file,User user) throws IOException;
 }

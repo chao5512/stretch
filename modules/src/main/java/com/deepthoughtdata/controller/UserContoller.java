@@ -9,15 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -103,5 +103,44 @@ public class UserContoller {
 
         return null;
     }
+
+    /**
+     * 功能描述:返回upload上传界面，测试时使用，开发时可删除
+     *
+     * @param: []
+     * @return: org.springframework.web.servlet.ModelAndView
+     * @auther: 王培文
+     * @date: 2018/5/10 14:15
+     */
+    @RequestMapping("uploadPage")
+    public ModelAndView uploadPage(){
+        return new ModelAndView("upload");
+    }
+
+    /**
+     * 功能描述: 完成文件上传功能
+     *
+     * @param: [file]
+     * @return: java.lang.String
+     * @auther: 王培文
+     * @date: 2018/5/10 14:55
+     */
+    @PostMapping("/upload")
+    @ResponseBody
+    public Result handleFileUpload(@RequestParam("file")MultipartFile file, @RequestParam("userid") String userId) {
+        //图片的类型在前端界面进行判断
+        try {
+        long id = Long.parseLong(userId);
+        //封装user对象，传给fileUpload
+        User user = new User();
+        user.setId(id);
+        userService.fileUpload(file, user);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1, "上传图像失败");
+        }
+        return ResultUtil.success();
+    }
+
 
 }
