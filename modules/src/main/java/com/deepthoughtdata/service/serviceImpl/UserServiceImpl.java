@@ -35,6 +35,9 @@ public class UserServiceImpl implements UserService {
     @Value("${file.address}")
     public String fileAddress;
 
+    @Value("${server.ip}:${server.port}")
+    private String mailUri;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -56,25 +59,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    //发送邮件
     @Override
-    public void userValidate(User user, String code) {
+    public void userValidate(User user,  String link) {
         MimeMessage message = javaMailSender.createMimeMessage();
 
-
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        try{
+            MimeMessageHelper helper=new MimeMessageHelper(message,true);
             helper.setFrom(mailUsername);
             helper.setTo(user.getEmail());
             helper.setSubject("用户注册（邮件主题）");
-            String link = "localhost:8888/user/registered?mailcode=" + code;
-//            String messages = String.format(link);
-//            helper.setText(messages, true);
-//            System.out.println("messages=" + messages);
-            message.setContent("尊敬的用户，您好！我是宋远迪，请点击激活链接完成邮箱激活<a href="
-                    + link + ">" + link + "</a>", "text/html;charset=UTF-8");
+            String strText = "尊敬的用户，您好！我是宋远迪，请点击激活链接完成邮箱激活<p><a href='"
+                    + link + "' target='_blank'>" + "激活账号" +"</a></p>";
+            helper.setText(strText, true);
             javaMailSender.send(message);
-
-
         } catch (MessagingException e) {
             logger.error("发送邮件失败：User:" + JSONObject.toJSONString(user) + ", mailcode: " + code);
         }
@@ -92,8 +90,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
+    public User findByEmailAndPassword(String email, String password) {
+        return userRepository.findByEmailAndPassword(email, password);
+    }
+
+    @Override
+    public int modifyByEmailAndPassword(String email, String password) {
+        return userRepository.modifyByEmailAndPassword(email, password);
     }
 
     /**

@@ -28,7 +28,7 @@ public interface UserService {
     public User findByUsername(String username);
 
     //邮件发送服务
-    public void userValidate(User user, String code);
+    public void userValidate(User user, String link);
 
     public User findByToken(String code);
 
@@ -45,4 +45,7 @@ public interface UserService {
      * @date: 2018/5/10 19:27
      */
     public void fileUpload(MultipartFile file,User user) throws IOException;
+    public User findByEmailAndPassword(String email, String password);
+
+    public int modifyByEmailAndPassword(String email, String password);
 }

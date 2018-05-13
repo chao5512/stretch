@@ -8,22 +8,31 @@ import java.io.Serializable;
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long id;//id唯一标识
   @Column(nullable = false)
-  private String username;
+  private String username;//用户名
   @Column(nullable = false)
-  private String password;
+  private String password;//密码
   @Column(nullable = false)
-  private String email;
+  private String email;//邮箱
   @Column(nullable = false)
-  private String token;
+  private String token;//验证码
   @Column(nullable = false)
-  private Long token_exptime;
+  private Long token_exptime;//验证码有效期
   @Column(nullable = false)
-  private Long status;
+  private Long status;//激活状态
+  @Column(nullable = false)
+  private Long regtime;//注册时间
+  @Column(nullable = false)
+  private String image;//用户头像
 
-  @Column(nullable = false)
-  private Long regtime;
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
 
   //用户头像路径
   @Column(nullable = true)

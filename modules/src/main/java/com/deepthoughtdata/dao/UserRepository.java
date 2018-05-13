@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @Author: jaysyd
  * @Date: 2018/4/27 16:31
- * @Description:
+ * @Description: 用户管理dao层
  */
 public interface  UserRepository extends JpaRepository<User, Long> {
 
@@ -23,12 +23,16 @@ public interface  UserRepository extends JpaRepository<User, Long> {
 
     User save(User user); //增加用户
 
-    User findAllByToken(String code);
+    User findAllByToken(String code); //根据激活码查找用户
 
     @Modifying
-    @Query("update User u set u.status = ?1 where u.token = ?2")
-    int modifyByTokenAndStatus(String  token, Long status);
+    @Query("update User u set u.status = ?2 where u.token = ?1")
+    int modifyByTokenAndStatus(String  token, Long status); //修改用户激活状态
 
-    User findByUsernameAndPassword(String username, String password);
+    User findByEmailAndPassword(String email, String password); //查找用户是否匹配
+
+    @Modifying
+    @Query("update User u set u.password = ?2 where u.email = ?1")//修改用户密码
+    int modifyByEmailAndPassword(String email, String password);
 
 }
