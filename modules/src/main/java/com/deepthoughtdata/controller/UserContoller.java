@@ -162,7 +162,8 @@ public class UserContoller {
      * @date: 2018/5/13 16:19
      */
     @RequestMapping("/upload")
-    public Result uploadImage(@RequestParam("file")MultipartFile file,String userId){
+    @ResponseBody
+    public Result uploadImage(@RequestParam("file")MultipartFile file,@RequestParam("userid") String userId){
         try {
             User user = new User();
             long id = Long.parseLong(userId);
