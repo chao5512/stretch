@@ -23,16 +23,19 @@ public class User implements Serializable {
   private Long status;//激活状态
   @Column(nullable = false)
   private Long regtime;//注册时间
-  @Column(nullable = false)
-  private String image;//用户头像
 
-  public String getImage() {
-    return image;
+  //用户头像路径
+  @Column(nullable = true)
+  public String getImagePath() {
+    return imagePath;
   }
 
-  public void setImage(String image) {
-    this.image = image;
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
   }
+
+  @Column(nullable = true)
+  private String imagePath;
 
   public Long getId() {
     return id;
