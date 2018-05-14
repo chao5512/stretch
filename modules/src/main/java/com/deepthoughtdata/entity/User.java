@@ -23,16 +23,6 @@ public class User implements Serializable {
   private Long status;//激活状态
   @Column(nullable = false)
   private Long regtime;//注册时间
-  @Column(nullable = false)
-  private String image;//用户头像
-
-  public String getImage() {
-    return image;
-  }
-
-  public void setImage(String image) {
-    this.image = image;
-  }
 
   //用户头像路径
   @Column(nullable = true)
