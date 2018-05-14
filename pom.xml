@@ -41,14 +41,11 @@
     </dependencies>
 
     <modules>
-
         <module>registry</module>
-        <module>account</module>
         <module>ribbon</module>
         <module>zuul</module>
-        <module>oauthserver</module>
         <module>oauth</module>
-        <module>modules</module>
+        <module>account</module>
     </modules>
 
     <dependencyManagement>
