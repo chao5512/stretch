@@ -19,6 +19,33 @@ public class Upload {
     //host主机地址
     public static final String HDFS_HOST = UploadConfigUtil.getConfigByKey("host");
 
+    //完成文件系统FileSystem的初始化
+
+    public static FileSystem fs = null;
+
+    /**
+     * 功能描述:获取hadoop的文件系统对象
+     * @param
+     * @return: org.apache.hadoop.fs.FileSystem
+     * @auther: 王培文
+     * @date: 2018/5/14 20:27
+     */
+    public static FileSystem getFileSystem() throws IOException {
+        if (fs == null){
+            try {
+                //创建文件配置对象
+                Configuration conf = new Configuration();
+                conf.set(FS_DEFAULT_FS, HDFS_HOST);
+                //获取文件系统
+                fs = FileSystem.get(conf);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        return fs;
+    }
+
     /**
      * 功能描述: 文件上传
      *
@@ -29,15 +56,10 @@ public class Upload {
      */
     public static String uploadFile(String sourceFileName, String destPath) throws IOException {
 
-        //创建文件配置对象
-        Configuration conf = new Configuration();
-
-        conf.set(FS_DEFAULT_FS, HDFS_HOST);
-
         Path source = new Path(sourceFileName);
 
         //获取文件系统
-        FileSystem fs = FileSystem.get(conf);
+        FileSystem fs = getFileSystem();
 
         //获取文件后缀名
         String suffixFileName = sourceFileName.substring(sourceFileName.lastIndexOf("."), sourceFileName.length());

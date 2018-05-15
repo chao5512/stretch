@@ -43,6 +43,15 @@ public interface UserService {
      * @date: 2018/5/10 19:27
      */
     public void fileUpload(MultipartFile file,User user) throws IOException;
+
+    /**
+     * 功能描述:根据id查询用户
+     * @param id
+     * @return: user
+     * @auther: 王培文
+     * @date: 2018/5/15 10:15
+     */
+    public User findByUserId(long id);
     public User findByEmailAndPassword(String email, String password);
 
     public int modifyByEmailAndPassword(String email, String password);
