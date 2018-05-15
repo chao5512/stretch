@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @Author: jaysyd
@@ -18,8 +20,14 @@ public interface UserService {
 
 
 
-    //增加用户
-    public User save(User user) ;
+    /**
+     * 功能描述:保存用户，将用户的密码用MD5+salt进行加密，并保存salt
+     * @param user
+     * @return: com.deepthoughtdata.entity.User
+     * @auther: 王培文
+     * @date: 2018/5/15 17:36
+     */
+    public User save(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException;
 
     //根据email查找用户信息
     public User findByEmail(String email);
@@ -52,7 +60,17 @@ public interface UserService {
      * @date: 2018/5/15 10:15
      */
     public User findByUserId(long id);
-    public User findByEmailAndPassword(String email, String password);
+    /**
+     * 功能描述:将密码进行MD5+salt校验
+     * @param email
+     * @param password
+     * @return: com.deepthoughtdata.entity.User
+     * @auther: 王培文
+     * @date: 2018/5/15 18:05
+     */
+    public User findByEmailAndPassword(String email, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException;
+
+
 
     public int modifyByEmailAndPassword(String email, String password);
 }

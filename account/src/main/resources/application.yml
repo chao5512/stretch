@@ -44,8 +44,7 @@ hadoop:
   mapProps:
     defaultFs: fs.defaultFS
     host: hdfs://172.16.31.91:9000
-
-
+    defaultImagePath: /user/hadoop/default/image/001.jpg
 
 
 

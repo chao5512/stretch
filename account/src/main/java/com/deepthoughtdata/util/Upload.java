@@ -19,6 +19,8 @@ public class Upload {
     //host主机地址
     public static final String HDFS_HOST = UploadConfigUtil.getConfigByKey("host");
 
+    public static final String USER_DEFAULT_IMAGE_PATH = UploadConfigUtil.getConfigByKey("defaultImagePath");
+
     //完成文件系统FileSystem的初始化
 
     public static FileSystem fs = null;

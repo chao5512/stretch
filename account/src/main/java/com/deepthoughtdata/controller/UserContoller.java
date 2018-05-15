@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,25 +55,35 @@ public class UserContoller {
     public Result login(@RequestParam("email") String email,
             @RequestParam("password") String password, HttpServletResponse response){
 
-        User user = userService.findByEmailAndPassword(email, password);
-        Result result = null;
-        if(user == null){
-            result = ResultUtil.error(-1, "账户名或密码错误！");
+        User user = null;
+        try {
+            user = userService.findByEmailAndPassword(email, password);
+            Result result = null;
+            if(user == null){
+                result = ResultUtil.error(-1, "账户名或密码错误！");
+                return result;
+            }else if(user.getStatus() == 0){
+                result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
+                return result;
+            }
+
+            logger.info("check token and logining");
+            Cookie cookie = new Cookie("token", tokenService.getToken());
+            cookie.setPath("/");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.addCookie(cookie);
+            System.out.println(cookie.getValue());
+            result = ResultUtil.success();
             return result;
-        }else if(user.getStatus() == 0){
-            result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
-            return result;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1, "未知错误！");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1, "未知错误！");
         }
 
-        logger.info("check token and logining");
-        Cookie cookie = new Cookie("token", tokenService.getToken());
-        cookie.setPath("/");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        response.addCookie(cookie);
-        System.out.println(cookie.getValue());
-        result = ResultUtil.success();
-        return result;
     }
 
     //判断邮箱是否存在

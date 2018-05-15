@@ -23,6 +23,17 @@ public class User implements Serializable {
   private Long status;//激活状态
   @Column(nullable = false)
   private Long regtime;//注册时间
+  @Column(nullable = false)
+  //用于加密的盐值
+  private String salt;
+
+  public String getSalt() {
+    return salt;
+  }
+
+  public void setSalt(String salt) {
+    this.salt = salt;
+  }
 
   //用户头像路径
   @Column(nullable = true)
