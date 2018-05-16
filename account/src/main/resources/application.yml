@@ -23,7 +23,7 @@ spring:
             required: true
   #数据库配置mysql
   datasource:
-    url: jdbc:mysql://172.16.31.91/ai-studio?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://172.16.31.91/ai_studio?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
