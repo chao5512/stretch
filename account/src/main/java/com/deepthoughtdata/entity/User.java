@@ -18,11 +18,11 @@ public class User implements Serializable {
   @Column(nullable = false)
   private String token;//验证码
   @Column(nullable = false)
-  private Long token_exptime;//验证码有效期
+  private String token_exptime;//验证码有效期
   @Column(nullable = false)
   private Long status;//激活状态
   @Column(nullable = false)
-  private Long regtime;//注册时间
+  private String regtime;//注册时间
   @Column(nullable = false)
   //用于加密的盐值
   private String salt;
@@ -148,11 +148,11 @@ public class User implements Serializable {
     this.token = token;
   }
 
-  public Long getToken_exptime() {
+  public String getToken_exptime() {
     return token_exptime;
   }
 
-  public void setToken_exptime(Long token_exptime) {
+  public void setToken_exptime(String token_exptime) {
     this.token_exptime = token_exptime;
   }
 
@@ -164,11 +164,11 @@ public class User implements Serializable {
     this.status = status;
   }
 
-  public Long getRegtime() {
+  public String getRegtime() {
     return regtime;
   }
 
-  public void setRegtime(Long regtime) {
+  public void setRegtime(String regtime) {
     this.regtime = regtime;
   }
 }

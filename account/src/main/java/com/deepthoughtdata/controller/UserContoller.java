@@ -3,6 +3,7 @@ package com.deepthoughtdata.controller;
 import com.deepthoughtdata.entity.User;
 import com.deepthoughtdata.service.TokenService;
 import com.deepthoughtdata.service.UserService;
+import com.deepthoughtdata.util.DateUtils;
 import com.deepthoughtdata.util.ResultUtil;
 import com.deepthoughtdata.util.Upload;
 import com.deepthoughtdata.vo.Result;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -37,6 +41,9 @@ public class UserContoller {
 
     @Value("${server.ip}:${server.port}")
     private String mailUri;
+
+    @Value("${spring.mail.sTime}")
+    private Long sTime;
 
     @Autowired
     private TokenService tokenService;
@@ -93,7 +100,7 @@ public class UserContoller {
     @ResponseBody
     public Boolean toRegister(User user) throws Exception{
         String email = user.getEmail();
-        if(userService.findByEmailAndStatus(email, "1") != null){
+        if(userService.findByEmailAndStatus(email, 1L) != null){
             logger.info("该邮箱已被注册！");
             return false;
         }
@@ -114,42 +121,47 @@ public class UserContoller {
         Map<String, Object> msg = new HashMap<>();
         String email = user.getEmail();
         String username = user.getUsername();
-        if(userService.findByEmailAndStatus(email, "1") != null){
+        if(userService.findByEmailAndStatus(email, 1L) != null){
             logger.info("注册失败，该邮箱已被注册！");
             return ResultUtil.error(-1, "该邮箱已被注册！");
-        }else if(userService.findByUsername(username) != null){
-            logger.info("注册失败，用户名已存在！");
-            return ResultUtil.error(-1, "用户名已存在！");
         }
         String mailActiveCode = "";
         mailActiveCode = UUID.randomUUID().toString();
         user.setStatus(0L);     //未激活状态
-        user.setToken(mailActiveCode);
-        userService.save(user);
+        user.setToken(mailActiveCode); //设置验证码
+        Date now = new Date();
+        user.setRegtime(DateUtils.formatDateToString(now, DateUtils.DATE_FORMAT_FULL));
+        //设置验证码过期时间
+        user.setToken_exptime(DateUtils.formatDateToString(
+                new Date(now.getTime()+sTime), DateUtils.DATE_FORMAT_FULL));
         String link = "http://" + mailUri + "/user/registered?mailcode=" + mailActiveCode;
         userService.userValidate(user, link);
+        userService.save(user);
         return ResultUtil.success();
     }
     //激活完成注册
     @RequestMapping(value = "registered")
     @Transactional
-    public String registered(HttpServletRequest request){
+    public String registered(HttpServletRequest request, Model model){
         String code = "";
         code = request.getParameter("mailcode");
         User user = userService.findByToken(code);
         if(user != null){
             userService.modifyByToken(code, 1L);
-            return "redirect:index";
+            return "redirect:registered";
+        }else if(user != null && new Date().getTime() > DateUtils.formatStringToDate(
+                user.getToken_exptime(), DateUtils.DATE_FORMAT_FULL).getTime()){
+            return "redirect:timeOut";
         }
 
-        return null;
+        return "redirect:registeredError";
     }
 
     //邮箱找回发送邮件功能
     @RequestMapping(value = "getBack")
     @Transactional
     public Result getBack(User user){
-        User user1 = userService.findByEmailAndStatus(user.getEmail(), "1");
+        User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
         }
@@ -161,7 +173,7 @@ public class UserContoller {
     @RequestMapping(value = "rpasswd")
     @Transactional
     public Result rpasswd(User user){
-        User user1 = userService.findByEmailAndStatus(user.getEmail(), "1");
+        User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             logger.error("用户不存在！");
             return ResultUtil.error(-1, "该用户不存在！");
