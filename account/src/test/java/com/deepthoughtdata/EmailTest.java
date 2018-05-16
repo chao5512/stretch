@@ -1,5 +1,6 @@
 package com.deepthoughtdata;
 
+import com.deepthoughtdata.util.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @Author: jaysyd
@@ -32,6 +35,21 @@ public class EmailTest {
         message.setSubject("测试邮件（邮件主题）");//邮件主题.
         message.setText("这是邮件内容");//邮件内容.
         javaMailSender.send(message);//发送邮件
+    }
+
+    @Test
+    public void testDate(){
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+        String nTime = DateUtils.formatDateToString(new Date(now.getTime()+300000), DateUtils.DATE_FORMAT_FULL);
+        System.out.println("StringNTime=" + nTime);
+
+        Long exp = DateUtils.formatStringToDate(nTime, DateUtils.DATE_FORMAT_FULL).getTime();
+
+        Long nowTime = new Date().getTime();
+        System.out.println(nowTime >= exp);
+
+
     }
 
 }

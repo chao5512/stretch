@@ -30,7 +30,7 @@ public interface UserService {
     public User save(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException;
 
     //根据email查找用户信息
-    public User findByEmailAndStatus(String email, String status);
+    public User findByEmailAndStatus(String email, Long status);
 
     //根据username查找用户信息
     public User findByUsername(String username);

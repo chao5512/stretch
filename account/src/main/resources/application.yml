@@ -12,6 +12,7 @@ spring:
     protocol: smtp #smtp是邮件发送协议，pop3和imap是邮件接收协议。因为我们要发送邮件，因此是smtp
     host: smtp.qq.com #邮件发送服务器的主机，这里采用的是qq邮箱来发送邮件
     port: 25  #邮件发送服务器的端口
+    sTime: 1800000 #邮件验证码过期时间
     username: 1046276907@qq.com #邮件发送服务器的用户名
     password: efivwhcchnoobbee
     properties:
@@ -23,7 +24,7 @@ spring:
             required: true
   #数据库配置mysql
   datasource:
-    url: jdbc:mysql://172.16.31.91/ai-studio?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://172.16.31.91/ai_studio?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
