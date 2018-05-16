@@ -68,6 +68,7 @@ public class UserContoller {
                 return result;
             }
 
+
             logger.info("check token and logining");
             Cookie cookie = new Cookie("token", tokenService.getToken());
             cookie.setPath("/");
