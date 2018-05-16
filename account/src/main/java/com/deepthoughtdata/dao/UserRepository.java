@@ -17,7 +17,7 @@ public interface  UserRepository extends JpaRepository<User, Long> {
 
     void deleteById(Long id); //根据id删除用户
 
-    User findByEmail(String email); //根据email查找用户信息
+    User findByEmailAndStatus(String email, String status); //根据email查找用户信息
 
     User findByUsername(String username); //根据username查找用户信息
 

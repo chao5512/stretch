@@ -31,6 +31,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("user")
+@CrossOrigin
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -91,7 +92,7 @@ public class UserContoller {
     @ResponseBody
     public Boolean toRegister(User user) throws Exception{
         String email = user.getEmail();
-        if(userService.findByEmail(email) != null){
+        if(userService.findByEmailAndStatus(email, "1") != null){
             logger.info("该邮箱已被注册！");
             return false;
         }
@@ -112,7 +113,7 @@ public class UserContoller {
         Map<String, Object> msg = new HashMap<>();
         String email = user.getEmail();
         String username = user.getUsername();
-        if(userService.findByEmail(email) != null){
+        if(userService.findByEmailAndStatus(email, "1") != null){
             logger.info("注册失败，该邮箱已被注册！");
             return ResultUtil.error(-1, "该邮箱已被注册！");
         }else if(userService.findByUsername(username) != null){
@@ -147,7 +148,7 @@ public class UserContoller {
     @RequestMapping(value = "getBack")
     @Transactional
     public Result getBack(User user){
-        User user1 = userService.findByEmail(user.getEmail());
+        User user1 = userService.findByEmailAndStatus(user.getEmail(), "1");
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
         }
@@ -159,7 +160,7 @@ public class UserContoller {
     @RequestMapping(value = "rpasswd")
     @Transactional
     public Result rpasswd(User user){
-        User user1 = userService.findByEmail(user.getEmail());
+        User user1 = userService.findByEmailAndStatus(user.getEmail(), "1");
         if(user1 == null){
             logger.error("用户不存在！");
             return ResultUtil.error(-1, "该用户不存在！");

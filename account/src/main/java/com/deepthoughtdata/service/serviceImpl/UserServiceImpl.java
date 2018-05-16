@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmailAndStatus(String email, String status) {
+        return userRepository.findByEmailAndStatus(email, status);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmailAndPassword(String email, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmailAndStatus(email, "1");
         if(user != null){
             //获得数据库中的密码
             String pwdIndb = user.getPassword();
