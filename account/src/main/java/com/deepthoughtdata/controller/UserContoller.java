@@ -4,22 +4,27 @@ import com.deepthoughtdata.entity.User;
 import com.deepthoughtdata.service.TokenService;
 import com.deepthoughtdata.service.UserService;
 import com.deepthoughtdata.util.ResultUtil;
+import com.deepthoughtdata.util.Upload;
 import com.deepthoughtdata.vo.Result;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,25 +55,35 @@ public class UserContoller {
     public Result login(@RequestParam("email") String email,
             @RequestParam("password") String password, HttpServletResponse response){
 
-        User user = userService.findByEmailAndPassword(email, password);
-        Result result = null;
-        if(user == null){
-            result = ResultUtil.error(-1, "账户名或密码错误！");
+        User user = null;
+        try {
+            user = userService.findByEmailAndPassword(email, password);
+            Result result = null;
+            if(user == null){
+                result = ResultUtil.error(-1, "账户名或密码错误！");
+                return result;
+            }else if(user.getStatus() == 0){
+                result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
+                return result;
+            }
+
+            logger.info("check token and logining");
+            Cookie cookie = new Cookie("token", tokenService.getToken());
+            cookie.setPath("/");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.addCookie(cookie);
+            System.out.println(cookie.getValue());
+            result = ResultUtil.success();
             return result;
-        }else if(user.getStatus() == 0){
-            result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
-            return result;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1, "未知错误！");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return ResultUtil.error(-1, "未知错误！");
         }
 
-        logger.info("check token and logining");
-        Cookie cookie = new Cookie("token", tokenService.getToken());
-        cookie.setPath("/");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        response.addCookie(cookie);
-        System.out.println(cookie.getValue());
-        result = ResultUtil.success();
-        return result;
     }
 
     //判断邮箱是否存在
@@ -174,6 +189,65 @@ public class UserContoller {
             return ResultUtil.error(-1,"图片上传失败");
         }
         return ResultUtil.success();
+    }
+
+    /**
+     * 功能描述:用户输入的用户id返回图片流
+     * @param request
+     * @param response
+     * @param userid
+     * @return: String
+     * @auther: 王培文
+     * @date: 2018/5/15 10:16
+     */
+    @RequestMapping(value = "/ioReadImage/{userid}",method = RequestMethod.GET)
+    public String IoReadImage(HttpServletRequest request,
+                              HttpServletResponse response,
+                              @PathVariable String userid){
+        FSDataInputStream inputStream = null;
+        ServletOutputStream out = null;
+        try {
+            //获取用户头像保存路径
+            long id = Long.parseLong(userid);
+            User user = userService.findByUserId(id);
+            //获取hadoop的文件系统
+            FileSystem fs = Upload.getFileSystem();
+            //获取输入流
+            inputStream = fs.open(new Path(user.getImagePath()));
+            //设置响应类型
+            response.setContentType("multipart/form-data");
+            out = response.getOutputStream();
+            //获取文件流
+            int len=0;
+            byte[] buffer = new byte[1024 * 10];
+            while((len = inputStream.read(buffer))!=-1){
+                out.write(buffer,0 ,len);
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 功能描述:跳转到img.html页面，仅供测试使用
+     * @param
+     * @return: java.lang.String
+     * @auther: 王培文
+     * @date: 2018/5/15 10:51
+     */
+    @RequestMapping(value = "img")
+    public String image(){
+        return "image";
     }
 
 }

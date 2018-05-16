@@ -1,6 +1,6 @@
 package com.deepthoughtdata.util;
 
-import com.deepthoughtdata.entity.UploadConifg;
+import com.deepthoughtdata.config.UploadConifg;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

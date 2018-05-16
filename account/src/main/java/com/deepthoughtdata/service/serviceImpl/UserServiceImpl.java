@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.deepthoughtdata.dao.UserRepository;
 import com.deepthoughtdata.entity.User;
 import com.deepthoughtdata.service.UserService;
+import com.deepthoughtdata.util.MD5Util;
 import com.deepthoughtdata.util.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @Author: jaysyd
@@ -45,7 +47,14 @@ public class UserServiceImpl implements UserService {
     private JavaMailSender javaMailSender;
 
     @Override
-    public User save(User user) {
+    public User save(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        //使用MD5+salt对用户密码进行加密
+        String salt = MD5Util.createSalt();
+        user.setSalt(salt);
+        String pwdIndb = MD5Util.encode(user.getPassword(), salt);
+        user.setPassword(pwdIndb);
+        //设置默认的用户头像路径
+        user.setImagePath(Upload.USER_DEFAULT_IMAGE_PATH);
         return userRepository.save(user);
     }
 
@@ -90,8 +99,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
+    public User findByEmailAndPassword(String email, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        User user = userRepository.findByEmail(email);
+        if(user != null){
+            //获得数据库中的密码
+            String pwdIndb = user.getPassword();
+            //获取盐值
+            String salt = user.getSalt();
+            //密码比对
+            boolean result = MD5Util.isPasswordValid(pwdIndb, password, salt);
+            if(result){
+                return user;
+            }else {
+                return null;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -143,6 +166,11 @@ public class UserServiceImpl implements UserService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public User findByUserId(long id) {
+        return userRepository.findById(id);
     }
 
 

@@ -23,6 +23,77 @@ public class User implements Serializable {
   private Long status;//激活状态
   @Column(nullable = false)
   private Long regtime;//注册时间
+  @Column(nullable = false)
+  //用于加密的盐值
+  private String salt;
+
+  private String gender; //性别
+
+  private String region; //地区
+
+  private String birthday; //生日
+
+  private String career; //职业
+
+  @Override
+  public String toString() {
+    return "User{" +
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", password='" + password + '\'' +
+            ", email='" + email + '\'' +
+            ", token='" + token + '\'' +
+            ", token_exptime=" + token_exptime +
+            ", status=" + status +
+            ", regtime=" + regtime +
+            ", salt='" + salt + '\'' +
+            ", gender='" + gender + '\'' +
+            ", region='" + region + '\'' +
+            ", birthday='" + birthday + '\'' +
+            ", career='" + career + '\'' +
+            ", imagePath='" + imagePath + '\'' +
+            '}';
+  }
+
+  public String getGender() {
+    return gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+  public String getRegion() {
+    return region;
+  }
+
+  public void setRegion(String region) {
+    this.region = region;
+  }
+
+  public String getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday(String birthday) {
+    this.birthday = birthday;
+  }
+
+  public String getCareer() {
+    return career;
+  }
+
+  public void setCareer(String career) {
+    this.career = career;
+  }
+
+  public String getSalt() {
+    return salt;
+  }
+
+  public void setSalt(String salt) {
+    this.salt = salt;
+  }
 
   //用户头像路径
   @Column(nullable = true)
