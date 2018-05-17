@@ -37,7 +37,7 @@ public class User implements Serializable {
 
   @Override
   public String toString() {
-    return "User{" +
+    return
             "id=" + id +
             ", username='" + username + '\'' +
             ", password='" + password + '\'' +
@@ -51,8 +51,8 @@ public class User implements Serializable {
             ", region='" + region + '\'' +
             ", birthday='" + birthday + '\'' +
             ", career='" + career + '\'' +
-            ", imagePath='" + imagePath + '\'' +
-            '}';
+            ", imagePath='" + imagePath + '\''
+            ;
   }
 
   public String getGender() {

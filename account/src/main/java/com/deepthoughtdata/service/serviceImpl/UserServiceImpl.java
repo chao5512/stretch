@@ -118,8 +118,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int modifyByEmailAndPassword(String email, String password) {
-        return userRepository.modifyByEmailAndPassword(email, password);
+    public int modifyByEmailAndPasswordAndSalt(String email, String password, String salt) {
+
+        return userRepository.modifyByEmailAndPasswordAndSalt(email, password, salt);
     }
 
     /**

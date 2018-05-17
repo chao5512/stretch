@@ -4,6 +4,7 @@ import com.deepthoughtdata.entity.User;
 import com.deepthoughtdata.service.TokenService;
 import com.deepthoughtdata.service.UserService;
 import com.deepthoughtdata.util.DateUtils;
+import com.deepthoughtdata.util.MD5Util;
 import com.deepthoughtdata.util.ResultUtil;
 import com.deepthoughtdata.util.Upload;
 import com.deepthoughtdata.util.ValidateCode;
@@ -86,10 +87,12 @@ public class UserContoller {
 
             logger.info("check token and logining");
             Cookie cookie = new Cookie("token", tokenService.getToken());
+            Cookie cookie1 = new Cookie("userInfo", user.toString());
             cookie.setPath("/");
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.addCookie(cookie);
+            response.addCookie(cookie1);
             System.out.println(cookie.getValue());
             result = ResultUtil.success();
             return result;
@@ -147,6 +150,7 @@ public class UserContoller {
         userService.save(user);
         return ResultUtil.success();
     }
+
     //激活完成注册
     @RequestMapping(value = "registered")
     @Transactional
@@ -173,20 +177,34 @@ public class UserContoller {
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
         }
-        userService.userValidate(user1,"http://www.baidu.com");
+        userService.userValidate(user1,"http://localhost:8088/templates/getBack.html?email="+ user1.getEmail());
         return ResultUtil.success();
     }
 
     //重置密码功能
     @RequestMapping(value = "rpasswd")
     @Transactional
-    public Result rpasswd(User user){
+    public Result rpasswd(User user) throws Exception{
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             logger.error("用户不存在！");
             return ResultUtil.error(-1, "该用户不存在！");
         }
-        userService.modifyByEmailAndPassword(user.getEmail(), user.getPassword());
+//      使用MD5+salt对用户密码进行加密
+        String salt = MD5Util.createSalt();
+        String password = MD5Util.encode(user.getPassword(), salt);
+        System.out.println("password="+password);
+        userService.modifyByEmailAndPasswordAndSalt(user.getEmail(), password, salt);
+        return ResultUtil.success();
+    }
+
+    //修改账户信息
+    @RequestMapping(value = "/updateUserInfo")
+    public Result updateUserInfo(User user) throws Exception{
+        if(userService.findByUserId(user.getId()) == null){
+            return ResultUtil.error(-1, "用户不存在！");
+        }
+        userService.save(user);
         return ResultUtil.success();
     }
 
