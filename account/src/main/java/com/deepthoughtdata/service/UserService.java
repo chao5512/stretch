@@ -72,5 +72,5 @@ public interface UserService {
 
 
 
-    public int modifyByEmailAndPassword(String email, String password);
+    public int modifyByEmailAndPasswordAndSalt(String email, String password, String salt);
 }

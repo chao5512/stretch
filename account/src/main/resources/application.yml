@@ -14,7 +14,7 @@ spring:
     port: 25  #邮件发送服务器的端口
     sTime: 1800000 #邮件验证码过期时间
     username: 1046276907@qq.com #邮件发送服务器的用户名
-    password: efivwhcchnoobbee
+    password: qrxfnnsgfcyybbhh
     properties:
       mail:
         smtp:

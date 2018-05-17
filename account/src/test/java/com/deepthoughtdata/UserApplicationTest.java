@@ -12,17 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.jws.soap.SOAPBinding;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * @Author: jaysyd
@@ -32,58 +36,133 @@ import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@WebAppConfiguration
 public class UserApplicationTest {
     private MockMvc mvc;
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private WebApplicationContext wac;
 
     @Before
     public void setUp() throws Exception{
-       mvc = MockMvcBuilders.standaloneSetup(new UserContoller()).build();
+       this.mvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
-//    @Test
-//    public void toLogin() throws Exception{
-//        String url = "/user/toLogin";
-//        String expectedResult = "login";//预期返回结果
-//        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON))
-//                .andReturn();
-//        int status = mvcResult.getResponse().getStatus();
-//        //接口返回结果
-//        String content = mvcResult.getResponse().getContentAsString();
-//        //打印结果和状态
-//        System.out.println("status = " + status);
-//        System.out.println("content = " + content);
-//
-//        //断言预期结果和状态
-//        Assert.assertTrue("错误", status == 200);
-//        Assert.assertFalse("错误", status != 200);
-//        Assert.assertTrue("数据一致", expectedResult.equals(content));
-//        Assert.assertFalse("数据不一致", !expectedResult.equals(content));
-//
-//    }
-//
-//    @Test
-//    public void login() throws Exception{
-//        String url = "/user/login";
-//        String expectedResult = "login";//预期返回结果
-//        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON))
-//                .andReturn();
-//        int status = mvcResult.getResponse().getStatus();
-//        //接口返回结果
-//        String content = mvcResult.getResponse().getContentAsString();
-//        //打印结果和状态
-//        System.out.println("status = " + status);
-//        System.out.println("content = " + content);
-//
-//        //断言预期结果和状态
-//        Assert.assertTrue("错误", status == 200);
-//        Assert.assertFalse("错误", status != 200);
-//        Assert.assertTrue("数据一致", expectedResult.equals(content));
-//        Assert.assertFalse("数据不一致", !expectedResult.equals(content));
-//
-//    }
+    //重置密码测试
+    @Test
+    public void rpasswd() throws Exception{
+        String url = "/user/rpasswd";
+
+        MvcResult mvcResult = this.mvc.perform(post(url)
+                .param("email", "1046276907@qq.com")
+                .param("password", "123455"))
+                .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        //接口返回结果
+        String content = mvcResult.getResponse().getContentAsString();
+        //打印结果和状态
+        System.out.println("status = " + status);
+        System.out.println("content = " + content);
+
+        //断言预期结果和状态
+        Assert.assertTrue("错误", status == 200);
+        Assert.assertFalse("错误", status != 200);
+    }
+
+    //登录测试
+    @Test
+    public void login() throws Exception{
+        String url = "/user/login";
+
+        MvcResult mvcResult = this.mvc.perform(post(url)
+                .param("email", "1046276907@qq.com")
+                .param("password", "123455"))
+                .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        //接口返回结果
+        String content = mvcResult.getResponse().getContentAsString();
+        //打印结果和状态
+        System.out.println("status = " + status);
+        System.out.println("content = " + content);
+
+        //断言预期结果和状态
+        Assert.assertTrue("错误", status == 200);
+        Assert.assertFalse("错误", status != 200);
+
+    }
+
+    //判断邮箱是否存在测试方法
+    @Test
+    public void exist() throws Exception{
+        String url = "/user/exist";
+
+        MvcResult mvcResult = this.mvc.perform(post(url)
+                .param("email", "1046276907@qq.com")
+                )
+                .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        //接口返回结果
+        String content = mvcResult.getResponse().getContentAsString();
+        //打印结果和状态
+        System.out.println("status = " + status);
+        System.out.println("content = " + content);
+
+        //断言预期结果和状态
+        Assert.assertTrue("错误", status == 200);
+        Assert.assertFalse("错误", status != 200);
+
+    }
+
+    //注册测试方法
+    @Test
+    public void register() throws Exception{
+        String url = "/user/register";
+
+        MvcResult mvcResult = this.mvc.perform(post(url)
+                .param("email", "1046276907@qq.com")
+                .param("password", "123455"))
+                .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        //接口返回结果
+        String content = mvcResult.getResponse().getContentAsString();
+        //打印结果和状态
+        System.out.println("status = " + status);
+        System.out.println("content = " + content);
+
+        //断言预期结果和状态
+        Assert.assertTrue("错误", status == 200);
+        Assert.assertFalse("错误", status != 200);
+
+    }
+
+    //修改用户信息测试方法
+    @Test
+    public void updateUserInfo() throws Exception{
+        String url = "/user/updateUserInfo";
+
+        MvcResult mvcResult = this.mvc.perform(post(url)
+                .param("id", "1")
+                .param("email", "1211254@qq.com")
+                .param("password", "123455"))
+                .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        //接口返回结果
+        String content = mvcResult.getResponse().getContentAsString();
+        //打印结果和状态
+        System.out.println("status = " + status);
+        System.out.println("content = " + content);
+
+        //断言预期结果和状态
+        Assert.assertTrue("错误", status == 200);
+        Assert.assertFalse("错误", status != 200);
+
+    }
+
+
+
+
 //    @Test
 //    public void registerTest(){
 //        User user = userService.findByEmail("ad");

@@ -21,7 +21,7 @@ public interface  UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username); //根据username查找用户信息
 
-    User save(User user); //增加用户
+    User save(User user); //增加&修改用户
 
     User findAllByToken(String code); //根据激活码查找用户
 
@@ -32,7 +32,9 @@ public interface  UserRepository extends JpaRepository<User, Long> {
     User findByEmailAndPassword(String email, String password); //查找用户是否匹配
 
     @Modifying
-    @Query("update User u set u.password = ?2 where u.email = ?1")//修改用户密码
-    int modifyByEmailAndPassword(String email, String password);
+    @Query("update User u set u.password = ?2 , u.salt = ?3 where u.email = ?1")//修改用户密码
+    int modifyByEmailAndPasswordAndSalt(String email, String password, String salt);
+
+
 
 }
