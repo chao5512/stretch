@@ -6,6 +6,7 @@ import com.deepthoughtdata.service.UserService;
 import com.deepthoughtdata.util.DateUtils;
 import com.deepthoughtdata.util.ResultUtil;
 import com.deepthoughtdata.util.Upload;
+import com.deepthoughtdata.util.ValidateCode;
 import com.deepthoughtdata.vo.Result;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -14,24 +15,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("user")
@@ -50,6 +55,9 @@ public class UserContoller {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @RequestMapping(value = "/toLogin")
     public String toLogin(){
@@ -262,6 +270,38 @@ public class UserContoller {
     @RequestMapping(value = "img")
     public String image(){
         return "image";
+    }
+
+    @RequestMapping(value = "/validateCode", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] code(HttpServletResponse response){
+        //通过验证码生成工具，生成验证码
+        ValidateCode validateCode = new ValidateCode(100, 30, 5, 10);
+        String code = validateCode.getCode();
+        //将验证码存放到redis中
+        String uuid = UUID.randomUUID().toString();
+        logger.info("uuid：" + uuid);
+        logger.info("验证码："+ code);
+        //uuid作为key，code作为value，保存2*60秒
+        redisTemplate.opsForValue().set(uuid, code, 2*60, TimeUnit.SECONDS);
+        //将验证码的key，及验证码图片返回。
+        Cookie cookie = new Cookie("ValidateCode", uuid);
+        response.addCookie(cookie);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            validateCode.write(baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
 }
