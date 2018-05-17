@@ -12,6 +12,7 @@ import com.deepthoughtdata.vo.Result;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.UTF8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
@@ -172,7 +174,55 @@ public class UserContoller {
     //邮箱找回发送邮件功能
     @RequestMapping(value = "getBack")
     @Transactional
-    public Result getBack(User user){
+    @ResponseBody
+    public Result getBack(User user,@RequestParam("code") String code,HttpServletRequest request){
+        logger.info("code值：" + code);
+        //从cookie中拿uuid
+        Cookie[] cookies = request.getCookies();
+        //key value 分别为cookie的键和值
+        String key = null;
+        String value = null;
+        //uuid保存ValidateCode中的值，用于从redis中查找验证码
+        String uuid = null;
+        for (Cookie cookie : cookies) {
+            try {
+                key = URLDecoder.decode(cookie.getName(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+            try {
+                value = URLDecoder.decode(cookie.getValue(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+            if("ValidateCode".equalsIgnoreCase(key)){
+                uuid = value;
+                logger.info("cookie中ValidateCode的值为：" + uuid);
+                break;
+            }
+        }
+        //验证码校验
+        if (uuid != null) {
+            //获取redis中存储的验证码
+            String redisCode = redisTemplate.opsForValue().get(uuid);
+            logger.info("redisCode：" + redisCode);
+            if (redisCode==null) {
+                logger.error("验证码超时|不存在");
+                return ResultUtil.error(-2,"验证码超时|不存在");
+            }else{
+                if (!code.equalsIgnoreCase(redisCode)){
+                    logger.error("验证码比对失败");
+                    return ResultUtil.error(-3,"验证码比对失败");
+                }
+            }
+        }else{
+            logger.error("未取得相应cookie信息");
+            return ResultUtil.error(-1,"未取得相应cookie信息");
+        }
+        logger.info("比对成功");
+        //比对成功之后进行截下来操作
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
@@ -290,6 +340,13 @@ public class UserContoller {
         return "image";
     }
 
+    /**
+     * 功能描述:验证码生成接口
+     * @param response
+     * @return: byte[]
+     * @auther: 王培文
+     * @date: 2018/5/17 17:05
+     */
     @RequestMapping(value = "/validateCode", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] code(HttpServletResponse response){
