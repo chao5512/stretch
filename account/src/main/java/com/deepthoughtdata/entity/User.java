@@ -38,20 +38,14 @@ public class User implements Serializable {
   @Override
   public String toString() {
     return
-            "id=" + id +
-            ", username='" + username + '\'' +
-            ", password='" + password + '\'' +
-            ", email='" + email + '\'' +
-            ", token='" + token + '\'' +
-            ", token_exptime=" + token_exptime +
-            ", status=" + status +
-            ", regtime=" + regtime +
-            ", salt='" + salt + '\'' +
-            ", gender='" + gender + '\'' +
-            ", region='" + region + '\'' +
-            ", birthday='" + birthday + '\'' +
-            ", career='" + career + '\'' +
-            ", imagePath='" + imagePath + '\''
+            "id=" + id + "#" +
+            "username=" + username + "#" +
+            "password=" + password + "#" +
+            "email=" + email + "#" +
+            "gender=" + gender + "#" +
+            "region=" + region + "#" +
+            "birthday=" + birthday + "#" +
+            "career=" + career
             ;
   }
 

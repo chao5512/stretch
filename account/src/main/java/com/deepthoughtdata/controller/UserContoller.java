@@ -164,6 +164,7 @@ public class UserContoller {
     //邮箱找回发送邮件功能
     @RequestMapping(value = "getBack")
     @Transactional
+    @ResponseBody
     public Result getBack(User user){
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
@@ -176,6 +177,7 @@ public class UserContoller {
     //重置密码功能
     @RequestMapping(value = "rpasswd")
     @Transactional
+    @ResponseBody
     public Result rpasswd(User user) throws Exception{
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
@@ -192,6 +194,7 @@ public class UserContoller {
 
     //修改账户信息
     @RequestMapping(value = "/updateUserInfo")
+    @ResponseBody
     public Result updateUserInfo(User user) throws Exception{
         if(userService.findByUserId(user.getId()) == null){
             return ResultUtil.error(-1, "用户不存在！");
