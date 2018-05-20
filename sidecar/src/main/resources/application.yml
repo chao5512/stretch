@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: sidecar
+server:
+  port: 5678
+sidecar:
+  port: 8999
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/stretch/eureka/

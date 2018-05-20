@@ -9,7 +9,7 @@ zuul:
     uaa:
       path: /uaa/**
       sensitiveHeaders:
-      serviceId: auth-server
+      serviceId: account
     api-a:
       path: /api-a/**
       serviceId: ribbon

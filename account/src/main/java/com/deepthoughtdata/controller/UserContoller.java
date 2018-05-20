@@ -7,36 +7,43 @@ import com.deepthoughtdata.util.DateUtils;
 import com.deepthoughtdata.util.MD5Util;
 import com.deepthoughtdata.util.ResultUtil;
 import com.deepthoughtdata.util.Upload;
+import com.deepthoughtdata.util.ValidateCode;
 import com.deepthoughtdata.vo.Result;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.UTF8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("user")
-@CrossOrigin
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -52,18 +59,14 @@ public class UserContoller {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/toLogin")
-    public String toLogin(){
-        System.out.println(mailUri);
-        return "page_user_login_1";
-    }
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     //用户登录接口
     @RequestMapping(value= "/login")
     @ResponseBody
     public Result login(@RequestParam("email") String email,
             @RequestParam("password") String password, HttpServletResponse response){
-
         User user = null;
         try {
             user = userService.findByEmailAndPassword(email, password);
@@ -75,24 +78,26 @@ public class UserContoller {
                 result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
                 return result;
             }
-
-
             logger.info("check token and logining");
-            Cookie cookie = new Cookie("token", tokenService.getToken());
-            Cookie cookie1 = new Cookie("userInfo", user.toString());
-            cookie.setPath("/");
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.addCookie(cookie);
-            response.addCookie(cookie1);
-            System.out.println(cookie.getValue());
-            result = ResultUtil.success();
+            Map<String, Object> map = new HashMap<>();
+            map.put("token", tokenService.getToken());
+            map.put("id",user.getId());
+            map.put("username",user.getUsername());
+            map.put("email",user.getEmail());
+            map.put("gender",user.getGender());
+            map.put("region",user.getRegion());
+            map.put("birthday",user.getBirthday());
+            map.put("career",user.getCareer());
+            result = ResultUtil.success(map);
+            System.out.println("data=" + result.getData());
             return result;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            logger.error("错误！",e);
             return ResultUtil.error(-1, "未知错误！");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            logger.error("错误！",e);
             return ResultUtil.error(-1, "未知错误！");
         }
 
@@ -110,11 +115,6 @@ public class UserContoller {
         return true;
     }
 
-    //首页
-    @RequestMapping(value = "index")
-    public String index(){
-        return "index";
-    }
 
     //注册功能
     @RequestMapping(value = "register")
@@ -146,26 +146,75 @@ public class UserContoller {
     //激活完成注册
     @RequestMapping(value = "registered")
     @Transactional
-    public String registered(HttpServletRequest request, Model model){
+    @ResponseBody
+    public Result registered(HttpServletRequest request, Model model){
         String code = "";
         code = request.getParameter("mailcode");
         User user = userService.findByToken(code);
-        if(user != null){
-            userService.modifyByToken(code, 1L);
-            return "redirect:registered";
-        }else if(user != null && new Date().getTime() > DateUtils.formatStringToDate(
-                user.getToken_exptime(), DateUtils.DATE_FORMAT_FULL).getTime()){
-            return "redirect:timeOut";
-        }
+        if(user == null){
+            return ResultUtil.error(-1, "用户不存在！");
 
-        return "redirect:registeredError";
+        }else if(new Date().getTime() > DateUtils.formatStringToDate(
+                user.getToken_exptime(), DateUtils.DATE_FORMAT_FULL).getTime()){
+            return ResultUtil.error(-1, "激活时间已过期！");
+        }
+        userService.modifyByToken(code, 1L);
+        return ResultUtil.success();
+
     }
 
     //邮箱找回发送邮件功能
     @RequestMapping(value = "getBack")
     @Transactional
     @ResponseBody
-    public Result getBack(User user){
+    public Result getBack(User user,@RequestParam("code") String code,HttpServletRequest request){
+        logger.info("code值：" + code);
+        //从cookie中拿uuid
+        Cookie[] cookies = request.getCookies();
+        //key value 分别为cookie的键和值
+        String key = null;
+        String value = null;
+        //uuid保存ValidateCode中的值，用于从redis中查找验证码
+        String uuid = null;
+        for (Cookie cookie : cookies) {
+            try {
+                key = URLDecoder.decode(cookie.getName(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+            try {
+                value = URLDecoder.decode(cookie.getValue(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                logger.error(e.getMessage());
+            }
+            if("ValidateCode".equalsIgnoreCase(key)){
+                uuid = value;
+                logger.info("cookie中ValidateCode的值为：" + uuid);
+                break;
+            }
+        }
+        //验证码校验
+        if (uuid != null) {
+            //获取redis中存储的验证码
+            String redisCode = redisTemplate.opsForValue().get(uuid);
+            logger.info("redisCode：" + redisCode);
+            if (redisCode==null) {
+                logger.error("验证码超时|不存在");
+                return ResultUtil.error(-2,"验证码超时|不存在");
+            }else{
+                if (!code.equalsIgnoreCase(redisCode)){
+                    logger.error("验证码比对失败");
+                    return ResultUtil.error(-3,"验证码比对失败");
+                }
+            }
+        }else{
+            logger.error("未取得相应cookie信息");
+            return ResultUtil.error(-1,"未取得相应cookie信息");
+        }
+        logger.info("比对成功");
+        //比对成功之后进行截下来操作
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
@@ -177,7 +226,6 @@ public class UserContoller {
     //重置密码功能
     @RequestMapping(value = "rpasswd")
     @Transactional
-    @ResponseBody
     public Result rpasswd(User user) throws Exception{
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
@@ -195,11 +243,12 @@ public class UserContoller {
     //修改账户信息
     @RequestMapping(value = "/updateUserInfo")
     @ResponseBody
+    @Transactional
     public Result updateUserInfo(User user) throws Exception{
         if(userService.findByUserId(user.getId()) == null){
             return ResultUtil.error(-1, "用户不存在！");
         }
-        userService.save(user);
+        userService.modifyUserInfo(user);
         return ResultUtil.success();
     }
 
@@ -283,6 +332,45 @@ public class UserContoller {
     @RequestMapping(value = "img")
     public String image(){
         return "image";
+    }
+
+    /**
+     * 功能描述:验证码生成接口
+     * @param response
+     * @return: byte[]
+     * @auther: 王培文
+     * @date: 2018/5/17 17:05
+     */
+    @RequestMapping(value = "/validateCode", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] code(HttpServletResponse response){
+        //通过验证码生成工具，生成验证码
+        ValidateCode validateCode = new ValidateCode(100, 30, 5, 10);
+        String code = validateCode.getCode();
+        //将验证码存放到redis中
+        String uuid = UUID.randomUUID().toString();
+        logger.info("uuid：" + uuid);
+        logger.info("验证码："+ code);
+        //uuid作为key，code作为value，保存2*60秒
+        redisTemplate.opsForValue().set(uuid, code, 2*60, TimeUnit.SECONDS);
+        //将验证码的key，及验证码图片返回。
+        Cookie cookie = new Cookie("ValidateCode", uuid);
+        response.addCookie(cookie);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            validateCode.write(baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
 }

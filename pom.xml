@@ -46,6 +46,7 @@
         <module>zuul</module>
         <module>oauth</module>
         <module>account</module>
+        <module>sidecar</module>
     </modules>
 
     <dependencyManagement>
