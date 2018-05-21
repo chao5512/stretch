@@ -78,7 +78,7 @@ public class UserApplicationTest {
 
         MvcResult mvcResult = this.mvc.perform(post(url)
                 .param("email", "1046276907@qq.com")
-                .param("password", "123455"))
+                .param("password", "123456"))
                 .andReturn();
         int status = mvcResult.getResponse().getStatus();
         //接口返回结果
