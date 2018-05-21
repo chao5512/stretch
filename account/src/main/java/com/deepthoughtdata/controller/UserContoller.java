@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("user")
+@CrossOrigin(exposedHeaders = "validateCode")
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -167,34 +168,8 @@ public class UserContoller {
     @RequestMapping(value = "getBack")
     @Transactional
     @ResponseBody
-    public Result getBack(User user,@RequestParam("code") String code,HttpServletRequest request){
+    public Result getBack(User user,@RequestParam("code")String code,@RequestParam("uuidKey") String uuid,HttpServletRequest request){
         logger.info("code值：" + code);
-        //从cookie中拿uuid
-        Cookie[] cookies = request.getCookies();
-        //key value 分别为cookie的键和值
-        String key = null;
-        String value = null;
-        //uuid保存ValidateCode中的值，用于从redis中查找验证码
-        String uuid = null;
-        for (Cookie cookie : cookies) {
-            try {
-                key = URLDecoder.decode(cookie.getName(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                logger.error(e.getMessage());
-            }
-            try {
-                value = URLDecoder.decode(cookie.getValue(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                logger.error(e.getMessage());
-            }
-            if("ValidateCode".equalsIgnoreCase(key)){
-                uuid = value;
-                logger.info("cookie中ValidateCode的值为：" + uuid);
-                break;
-            }
-        }
         //验证码校验
         if (uuid != null) {
             //获取redis中存储的验证码
@@ -202,19 +177,23 @@ public class UserContoller {
             logger.info("redisCode：" + redisCode);
             if (redisCode==null) {
                 logger.error("验证码超时|不存在");
-                return ResultUtil.error(-2,"验证码超时|不存在");
+                return ResultUtil.error(-5,"验证码超时|不存在");
             }else{
-                if (!code.equalsIgnoreCase(redisCode)){
-                    logger.error("验证码比对失败");
-                    return ResultUtil.error(-3,"验证码比对失败");
+                if (code !=null){
+                    if (!code.equalsIgnoreCase(redisCode)){
+                        logger.error("验证码比对失败");
+                        return ResultUtil.error(-4,"验证码比对失败");
+                    }
+                }else{
+                    return ResultUtil.error(-1,"code未取到值");
                 }
             }
         }else{
-            logger.error("未取得相应cookie信息");
-            return ResultUtil.error(-1,"未取得相应cookie信息");
+            logger.error("未取得相应uuid的key信息");
+            return ResultUtil.error(-1,"未取得相应uuid的key信息");
         }
         logger.info("比对成功");
-        //比对成功之后进行截下来操作
+        //比对成功之后进行接下来操作
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
@@ -341,7 +320,7 @@ public class UserContoller {
      * @auther: 王培文
      * @date: 2018/5/17 17:05
      */
-    @RequestMapping(value = "/validateCode", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/validateCode", method = RequestMethod.GET)
     @ResponseBody
     public byte[] code(HttpServletResponse response){
         //通过验证码生成工具，生成验证码
@@ -354,8 +333,7 @@ public class UserContoller {
         //uuid作为key，code作为value，保存2*60秒
         redisTemplate.opsForValue().set(uuid, code, 2*60, TimeUnit.SECONDS);
         //将验证码的key，及验证码图片返回。
-        Cookie cookie = new Cookie("ValidateCode", uuid);
-        response.addCookie(cookie);
+        response.setHeader("validateCode",uuid);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             validateCode.write(baos);
