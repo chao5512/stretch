@@ -53,7 +53,7 @@ public class AccessTokenFilter extends ZuulFilter {
             ctx.setResponseStatusCode(200);
             ctx.set("isSuccess", true);
         }else{
-            response.addHeader("Access-Control-Allow-Origin", "*");
+//            response.addHeader("Access-Control-Allow-Origin", "*");
             ctx.setSendZuulResponse(false);
             ctx.setResponseStatusCode(200);
             ctx.setResponseBody("{\"code\":\"1\",\"msg\":\"token无效！\"}");
