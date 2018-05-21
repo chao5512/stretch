@@ -13,6 +13,7 @@
     <packaging>war</packaging>
     <name>sidecar</name>
 
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
