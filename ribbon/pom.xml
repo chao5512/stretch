@@ -11,7 +11,6 @@
 
     <groupId>com.deepthoughtdata</groupId>
     <artifactId>ribbon</artifactId>
-    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>ribbon Maven Webapp</name>
     <url>http://maven.apache.org</url>
