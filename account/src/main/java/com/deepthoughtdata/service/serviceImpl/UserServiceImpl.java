@@ -123,6 +123,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.modifyByEmailAndPasswordAndSalt(email, password, salt);
     }
 
+    @Override
+    public int modifyUserInfo(User user) {
+        return userRepository.modifyUserInfo(user.getId(), user.getUsername(), user.getGender(), user.getBirthday(), user.getCareer(), user.getRegion());
+    }
+
     /**
      * 功能描述:文件上传实现类
      *

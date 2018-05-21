@@ -35,12 +35,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-//allowedHeaders = "validateCode" 设置后，在跨域的情况下，浏览器就能拿到这样的特殊响应字段内容
+
 @Controller
 @RequestMapping("user")
 @CrossOrigin(exposedHeaders = "validateCode")
@@ -62,18 +63,11 @@ public class UserContoller {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @RequestMapping(value = "/toLogin")
-    public String toLogin(){
-        System.out.println(mailUri);
-        return "page_user_login_1";
-    }
-
     //用户登录接口
     @RequestMapping(value= "/login")
     @ResponseBody
     public Result login(@RequestParam("email") String email,
             @RequestParam("password") String password, HttpServletResponse response){
-
         User user = null;
         try {
             user = userService.findByEmailAndPassword(email, password);
@@ -85,24 +79,26 @@ public class UserContoller {
                 result = ResultUtil.error(-1, "账号未激活，请先激活账号！");
                 return result;
             }
-
-
             logger.info("check token and logining");
-            Cookie cookie = new Cookie("token", tokenService.getToken());
-            Cookie cookie1 = new Cookie("userInfo", user.toString());
-            cookie.setPath("/");
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.addCookie(cookie);
-            response.addCookie(cookie1);
-            System.out.println(cookie.getValue());
-            result = ResultUtil.success();
+            Map<String, Object> map = new HashMap<>();
+            map.put("token", tokenService.getToken());
+            map.put("id",user.getId());
+            map.put("username",user.getUsername());
+            map.put("email",user.getEmail());
+            map.put("gender",user.getGender());
+            map.put("region",user.getRegion());
+            map.put("birthday",user.getBirthday());
+            map.put("career",user.getCareer());
+            result = ResultUtil.success(map);
+            System.out.println("data=" + result.getData());
             return result;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            logger.error("错误！",e);
             return ResultUtil.error(-1, "未知错误！");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            logger.error("错误！",e);
             return ResultUtil.error(-1, "未知错误！");
         }
 
@@ -120,11 +116,6 @@ public class UserContoller {
         return true;
     }
 
-    //首页
-    @RequestMapping(value = "index")
-    public String index(){
-        return "index";
-    }
 
     //注册功能
     @RequestMapping(value = "register")
@@ -156,19 +147,21 @@ public class UserContoller {
     //激活完成注册
     @RequestMapping(value = "registered")
     @Transactional
-    public String registered(HttpServletRequest request, Model model){
+    @ResponseBody
+    public Result registered(HttpServletRequest request, Model model){
         String code = "";
         code = request.getParameter("mailcode");
         User user = userService.findByToken(code);
-        if(user != null){
-            userService.modifyByToken(code, 1L);
-            return "redirect:registered";
-        }else if(user != null && new Date().getTime() > DateUtils.formatStringToDate(
-                user.getToken_exptime(), DateUtils.DATE_FORMAT_FULL).getTime()){
-            return "redirect:timeOut";
-        }
+        if(user == null){
+            return ResultUtil.error(-1, "用户不存在！");
 
-        return "redirect:registeredError";
+        }else if(new Date().getTime() > DateUtils.formatStringToDate(
+                user.getToken_exptime(), DateUtils.DATE_FORMAT_FULL).getTime()){
+            return ResultUtil.error(-1, "激活时间已过期！");
+        }
+        userService.modifyByToken(code, 1L);
+        return ResultUtil.success();
+
     }
 
     //邮箱找回发送邮件功能
@@ -228,11 +221,13 @@ public class UserContoller {
 
     //修改账户信息
     @RequestMapping(value = "/updateUserInfo")
+    @ResponseBody
+    @Transactional
     public Result updateUserInfo(User user) throws Exception{
         if(userService.findByUserId(user.getId()) == null){
             return ResultUtil.error(-1, "用户不存在！");
         }
-        userService.save(user);
+        userService.modifyUserInfo(user);
         return ResultUtil.success();
     }
 

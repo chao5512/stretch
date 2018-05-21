@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.jws.soap.SOAPBinding;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -73,4 +74,6 @@ public interface UserService {
 
 
     public int modifyByEmailAndPasswordAndSalt(String email, String password, String salt);
+
+    public int modifyUserInfo(User user);
 }
