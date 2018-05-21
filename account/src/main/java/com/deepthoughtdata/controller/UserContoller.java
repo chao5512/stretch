@@ -193,7 +193,7 @@ public class UserContoller {
             return ResultUtil.error(-1,"未取得相应uuid的key信息");
         }
         logger.info("比对成功");
-        //比对成功之后进行截下来操作
+        //比对成功之后进行接下来操作
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             return ResultUtil.error(-1, "该用户不存在！");
@@ -333,27 +333,19 @@ public class UserContoller {
         //uuid作为key，code作为value，保存2*60秒
         redisTemplate.opsForValue().set(uuid, code, 2*60, TimeUnit.SECONDS);
         //将验证码的key，及验证码图片返回。
-        //Cookie cookie = new Cookie("ValidateCode", uuid);
-        //response.addCookie(cookie);
         response.setHeader("validateCode",uuid);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        HashMap map = new HashMap();
-//        map.put("validateCode",uuid);
         try {
             validateCode.write(baos);
-//            map.put("iostream",baos.toByteArray());
-//            return ResultUtil.success(map);
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
-//            return ResultUtil.error(-1,"获取验证码失败");
             return null;
         } finally {
             try {
                 baos.close();
             } catch (IOException e) {
                 e.printStackTrace();
-//                return ResultUtil.error(-1,"获取验证码失败");
                 return null;
             }
         }
