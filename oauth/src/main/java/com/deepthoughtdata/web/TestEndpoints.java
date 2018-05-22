@@ -1,4 +1,4 @@
-package moe.cnkirito.security.oauth2.web;
+package com.deepthoughtdata.web;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author 徐靖峰
+ * @author jaysyd
  * Date 2018-04-19
  */
 @RestController

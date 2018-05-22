@@ -1,4 +1,4 @@
-package moe.cnkirito.security.oauth2.config;
+package com.deepthoughtdata.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 /**
- * @author 徐靖峰
+ * @author jaysyd
  * Date 2018-04-19
  */
 @Configuration
