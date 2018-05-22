@@ -20,6 +20,9 @@ spring:
   cloud:
       client:
         ipAddress: localhost
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
 #security:
 #  oauth2:
 #    client:
