@@ -21,8 +21,8 @@ spring:
       client:
         ipAddress: localhost
 ribbon:
-  ReadTimeout: 10000
-  ConnectTimeout: 10000
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
 #security:
 #  oauth2:
 #    client:
