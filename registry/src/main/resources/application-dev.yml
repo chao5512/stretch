@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
   servlet:
     context-path: /stretch
 eureka:
@@ -9,4 +9,4 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     serviceUrl:
-      defaultZone: http://localhost:8080/stretch/eureka  #其实就是 http://localhost:8080/eureka/
+      defaultZone: http://localhost:8081/stretch/eureka  #其实就是 http://localhost:8080/eureka/

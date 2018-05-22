@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("user")
-@CrossOrigin(exposedHeaders = "validateCode")
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -205,7 +204,26 @@ public class UserContoller {
     //重置密码功能
     @RequestMapping(value = "rpasswd")
     @Transactional
+    @ResponseBody
     public Result rpasswd(User user) throws Exception{
+        User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
+        if(user1 == null){
+            logger.error("用户不存在！");
+            return ResultUtil.error(-1, "该用户不存在！");
+        }
+//      使用MD5+salt对用户密码进行加密
+        String salt = MD5Util.createSalt();
+        String password = MD5Util.encode(user.getPassword(), salt);
+        System.out.println("password="+password);
+        userService.modifyByEmailAndPasswordAndSalt(user.getEmail(), password, salt);
+        return ResultUtil.success();
+    }
+
+    //修改密码功能
+    @RequestMapping(value = "updatePasswd")
+    @Transactional
+    @ResponseBody
+    public Result updatePasswd(User user) throws Exception{
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
             logger.error("用户不存在！");

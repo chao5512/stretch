@@ -8,15 +8,15 @@
 		<artifactId>stretch</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-
+    <packaging>jar</packaging>
 	<artifactId>registry</artifactId>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>

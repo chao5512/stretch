@@ -48,13 +48,12 @@ public class AccessTokenFilter extends ZuulFilter {
 
         }else if("login".equals(ignore) || "exist".equals(ignore) ||
                 "register".equals(ignore) || "registered".equals(ignore) ||
-                "getBack".equals(ignore) || "rpasswd".equals(ignore) ||
-                "validateCode".equals(ignore)){
+                "getBack".equals(ignore) || "rpasswd".equals(ignore)){
             ctx.setSendZuulResponse(true);
             ctx.setResponseStatusCode(200);
             ctx.set("isSuccess", true);
         }else{
-            //response.addHeader("Access-Control-Allow-Origin", "*");
+//            response.addHeader("Access-Control-Allow-Origin", "*");
             ctx.setSendZuulResponse(false);
             ctx.setResponseStatusCode(200);
             ctx.setResponseBody("{\"code\":\"1\",\"msg\":\"token无效！\"}");

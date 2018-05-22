@@ -1,7 +1,7 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8080/stretch/eureka/
+      defaultZone: http://localhost:8081/stretch/eureka/
 server:
   port: 8084
 zuul:
@@ -20,6 +20,7 @@ spring:
   cloud:
       client:
         ipAddress: localhost
+
 #security:
 #  oauth2:
 #    client:

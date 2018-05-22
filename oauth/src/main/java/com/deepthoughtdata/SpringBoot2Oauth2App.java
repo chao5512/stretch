@@ -1,10 +1,10 @@
-package moe.cnkirito.security.oauth2;
+package com.deepthoughtdata;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author 徐靖峰
+ * @author jaysyd
  * Date 2018-04-19
  */
 @SpringBootApplication

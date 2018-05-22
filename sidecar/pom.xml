@@ -10,8 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sidecar</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>sidecar</name>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,4 +1,4 @@
-package moe.cnkirito.security.oauth2.config;
+package com.deepthoughtdata.config;
 
 
 import org.springframework.context.annotation.Bean;
@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
- * @author 徐靖峰
+ * @author jaysyd
  * Date 2018-04-19
  */
 @Configuration
