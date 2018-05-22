@@ -20,6 +20,7 @@ spring:
   cloud:
       client:
         ipAddress: localhost
+
 #security:
 #  oauth2:
 #    client:
