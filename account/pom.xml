@@ -99,14 +99,6 @@
             <!--<scope>test</scope>-->
         <!--</dependency>-->
         <!--&lt;!&ndash;hadoop junit test stop&ndash;&gt;-->
-        <!-- spring boot devtools 依赖包. -->
-        <!--devtools实现热部署-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-            <scope>true</scope>
-        </dependency>
         <!--lombook简化实体类的代码-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -144,6 +136,14 @@
             <artifactId>hadoop-common</artifactId>
             <version>2.7.1</version>
         </dependency>
+
+        <!--热部署start-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--热部署end-->
 
     </dependencies>
 
