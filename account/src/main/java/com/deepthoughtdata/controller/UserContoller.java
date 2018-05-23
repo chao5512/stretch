@@ -13,6 +13,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.UTF8;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +196,7 @@ public class UserContoller {
         //比对成功之后进行接下来操作
         User user1 = userService.findByEmailAndStatus(user.getEmail(), 1L);
         if(user1 == null){
-            return ResultUtil.error(-1, "该用户不存在！");
+            return ResultUtil.error(-2, "该用户不存在！");
         }
         userService.userValidate(user1,"http://localhost:8088/templates/getBack.html?email="+ user1.getEmail());
         return ResultUtil.success();

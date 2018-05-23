@@ -48,7 +48,8 @@ public class AccessTokenFilter extends ZuulFilter {
 
         }else if("login".equals(ignore) || "exist".equals(ignore) ||
                 "register".equals(ignore) || "registered".equals(ignore) ||
-                "getBack".equals(ignore) || "rpasswd".equals(ignore)){
+                "getBack".equals(ignore) || "rpasswd".equals(ignore) ||
+                "validateCode".equals(ignore)){
             ctx.setSendZuulResponse(true);
             ctx.setResponseStatusCode(200);
             ctx.set("isSuccess", true);
