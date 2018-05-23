@@ -24,6 +24,7 @@ public class HiveConfig {
 
     @Bean(name="hiveJdbcTemplate")
     JdbcTemplate getHiveJdbcTemplate(){
+
         String connUrl = hiveUrl + ":" +hivePort + "/" + hiveSchema;
         DataSource hiveDataSource = new SimpleDriverDataSource(new HiveDriver(), connUrl, hiveUrl, hivePassword);
         return new JdbcTemplate(hiveDataSource);
