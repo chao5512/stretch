@@ -43,8 +43,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @Controller
 @RequestMapping("user")
+@Api(tags="用户管理")
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -239,6 +243,7 @@ public class UserContoller {
     }
 
     //修改账户信息
+    @ApiOperation(httpMethod = "GET", value = "更新账户信息", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/updateUserInfo")
     @ResponseBody
     @Transactional
