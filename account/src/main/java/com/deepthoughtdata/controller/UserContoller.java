@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Controller
 @RequestMapping("user")
-@Api(tags="用户管理")
+@Api(value = "用户管理", description = "用户管理模块")
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
@@ -68,6 +68,7 @@ public class UserContoller {
     private RedisTemplate<String, String> redisTemplate;
 
     //用户登录接口
+    @ApiOperation(value = "用户登录",httpMethod = "POST")
     @RequestMapping(value= "/login")
     @ResponseBody
     public Result login(@RequestParam("email") String email,
@@ -109,6 +110,7 @@ public class UserContoller {
     }
 
     //判断邮箱是否存在
+    @ApiOperation(value = "邮箱是否已注册",httpMethod = "POST")
     @RequestMapping(value = "exist")
     @ResponseBody
     public Boolean toRegister(User user) throws Exception{
@@ -122,6 +124,7 @@ public class UserContoller {
 
 
     //注册功能
+    @ApiOperation(value = "注册",httpMethod = "POST")
     @RequestMapping(value = "register")
     @ResponseBody
     @Transactional
@@ -149,6 +152,7 @@ public class UserContoller {
     }
 
     //激活完成注册
+    @ApiOperation(value = "注册激活",httpMethod = "POST")
     @RequestMapping(value = "registered")
     @Transactional
     @ResponseBody
@@ -169,6 +173,7 @@ public class UserContoller {
     }
 
     //邮箱找回发送邮件功能
+    @ApiOperation(value = "找回密码",httpMethod = "POST")
     @RequestMapping(value = "getBack")
     @Transactional
     @ResponseBody
@@ -207,6 +212,7 @@ public class UserContoller {
     }
 
     //重置密码功能
+    @ApiOperation(value = "重置密码",httpMethod = "POST")
     @RequestMapping(value = "rpasswd")
     @Transactional
     @ResponseBody
@@ -225,6 +231,7 @@ public class UserContoller {
     }
 
     //修改密码功能
+    @ApiOperation(value = "修改密码",httpMethod = "POST")
     @RequestMapping(value = "updatePasswd")
     @Transactional
     @ResponseBody
@@ -243,7 +250,7 @@ public class UserContoller {
     }
 
     //修改账户信息
-    @ApiOperation(httpMethod = "GET", value = "更新账户信息", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "更新账户信息")
     @RequestMapping(value = "/updateUserInfo")
     @ResponseBody
     @Transactional
@@ -263,6 +270,7 @@ public class UserContoller {
      * @auther: 王培文
      * @date: 2018/5/13 16:19
      */
+    @ApiOperation(value = "上传图片",httpMethod = "POST")
     @RequestMapping("/upload")
     @ResponseBody
     public Result uploadImage(@RequestParam("file")MultipartFile file,@RequestParam("userid") String userId){
@@ -287,6 +295,7 @@ public class UserContoller {
      * @auther: 王培文
      * @date: 2018/5/15 10:16
      */
+    @ApiOperation(value = "加载图片",httpMethod = "POST")
     @RequestMapping(value = "/ioReadImage/{userid}",method = RequestMethod.GET)
     public String IoReadImage(HttpServletRequest request,
                               HttpServletResponse response,
@@ -344,6 +353,7 @@ public class UserContoller {
      * @auther: 王培文
      * @date: 2018/5/17 17:05
      */
+    @ApiOperation(value = "验证码生成",httpMethod = "POST")
     @RequestMapping(value = "/validateCode", method = RequestMethod.GET)
     @ResponseBody
     public byte[] code(HttpServletResponse response){

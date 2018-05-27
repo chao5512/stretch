@@ -9,8 +9,7 @@
     </parent>
 
     <properties>
-        <swagger.version>1.5.19</swagger.version>
-        <io.springfox.version>2.8.0</io.springfox.version>
+        <io.springfox.version>2.7.0</io.springfox.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
