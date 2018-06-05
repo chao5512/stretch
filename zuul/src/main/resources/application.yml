@@ -8,8 +8,10 @@ zuul:
   routes:
     uaa:
       path: /uaa/**
-      sensitiveHeaders:
       serviceId: account
+    model:
+      path: /model/**
+      serviceId: appmodule
     api-a:
       path: /api-a/**
       serviceId: ribbon

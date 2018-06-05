@@ -3,6 +3,11 @@ server:
 
 
 spring:
+  application:
+      name: oauth
+  cloud:
+      client:
+        ipAddress: localhost
   redis:
     host: 182.92.82.3
     database: 0
