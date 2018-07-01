@@ -12,6 +12,15 @@ zuul:
     model:
       path: /model/**
       serviceId: appmodule
+    dataset:
+      path: /dataset/**
+      serviceId: dataset
+    mining:
+      path: /mining/**
+      serviceId: mining
+    pipe:
+      path: /pipe/**
+      serviceId: pipe
     api-a:
       path: /api-a/**
       serviceId: ribbon
