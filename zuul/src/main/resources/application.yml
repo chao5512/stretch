@@ -18,6 +18,9 @@ zuul:
     mining:
       path: /mining/**
       serviceId: mining
+    machflow:
+      path: /machflow/**
+      serviceId: machflow
     pipe:
       path: /pipe/**
       serviceId: pipe
