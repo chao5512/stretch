@@ -48,7 +48,7 @@ spring:
     cache: false
     ####### reids 配置信息#######
   redis:
-    host: 182.92.82.3
+    host: localhost
     database: 0
     port: 6379
     jedis:
