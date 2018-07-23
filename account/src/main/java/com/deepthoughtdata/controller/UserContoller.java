@@ -69,7 +69,7 @@ public class UserContoller {
 
     //用户登录接口
     @ApiOperation(value = "用户登录",httpMethod = "POST")
-    @RequestMapping(value= "/login")
+    @RequestMapping(value= "/login",method = RequestMethod.POST)
     @ResponseBody
     public Result login(@RequestParam("email") String email,
             @RequestParam("password") String password, HttpServletResponse response){
@@ -111,7 +111,7 @@ public class UserContoller {
 
     //判断邮箱是否存在
     @ApiOperation(value = "邮箱是否已注册",httpMethod = "POST")
-    @RequestMapping(value = "exist")
+    @RequestMapping(value = "exist",method = RequestMethod.POST)
     @ResponseBody
     public Boolean toRegister(User user) throws Exception{
         String email = user.getEmail();
@@ -125,7 +125,7 @@ public class UserContoller {
 
     //注册功能
     @ApiOperation(value = "注册",httpMethod = "POST")
-    @RequestMapping(value = "register")
+    @RequestMapping(value = "register",method = RequestMethod.POST)
     @ResponseBody
     @Transactional
     public Result register(User user) throws Exception{
@@ -153,7 +153,7 @@ public class UserContoller {
 
     //激活完成注册
     @ApiOperation(value = "注册激活",httpMethod = "POST")
-    @RequestMapping(value = "registered")
+    @RequestMapping(value = "registered",method = RequestMethod.POST)
     @Transactional
     @ResponseBody
     public Result registered(HttpServletRequest request, Model model){
@@ -174,7 +174,7 @@ public class UserContoller {
 
     //邮箱找回发送邮件功能
     @ApiOperation(value = "找回密码",httpMethod = "POST")
-    @RequestMapping(value = "getBack")
+    @RequestMapping(value = "getBack",method = RequestMethod.POST)
     @Transactional
     @ResponseBody
     public Result getBack(User user,@RequestParam("code")String code,@RequestParam("uuidKey") String uuid,HttpServletRequest request){
@@ -213,7 +213,7 @@ public class UserContoller {
 
     //重置密码功能
     @ApiOperation(value = "重置密码",httpMethod = "POST")
-    @RequestMapping(value = "rpasswd")
+    @RequestMapping(value = "rpasswd",method = RequestMethod.POST)
     @Transactional
     @ResponseBody
     public Result rpasswd(User user) throws Exception{
@@ -232,7 +232,7 @@ public class UserContoller {
 
     //修改密码功能
     @ApiOperation(value = "修改密码",httpMethod = "POST")
-    @RequestMapping(value = "updatePasswd")
+    @RequestMapping(value = "updatePasswd",method = RequestMethod.POST)
     @Transactional
     @ResponseBody
     public Result updatePasswd(User user) throws Exception{
@@ -250,8 +250,8 @@ public class UserContoller {
     }
 
     //修改账户信息
-    @ApiOperation(value = "更新账户信息")
-    @RequestMapping(value = "/updateUserInfo")
+    @ApiOperation(value = "更新账户信息",httpMethod = "POST")
+    @RequestMapping(value = "/updateUserInfo",method = RequestMethod.POST)
     @ResponseBody
     @Transactional
     public Result updateUserInfo(User user) throws Exception{
@@ -271,7 +271,7 @@ public class UserContoller {
      * @date: 2018/5/13 16:19
      */
     @ApiOperation(value = "上传图片",httpMethod = "POST")
-    @RequestMapping("/upload")
+    @RequestMapping(value = "/upload",method = RequestMethod.POST)
     @ResponseBody
     public Result uploadImage(@RequestParam("file")MultipartFile file,@RequestParam("userid") String userId){
         try {
@@ -296,7 +296,7 @@ public class UserContoller {
      * @date: 2018/5/15 10:16
      */
     @ApiOperation(value = "加载图片",httpMethod = "POST")
-    @RequestMapping(value = "/ioReadImage/{userid}",method = RequestMethod.GET)
+    @RequestMapping(value = "/ioReadImage/{userid}",method = RequestMethod.POST)
     public String IoReadImage(HttpServletRequest request,
                               HttpServletResponse response,
                               @PathVariable String userid){
@@ -335,18 +335,6 @@ public class UserContoller {
     }
 
     /**
-     * 功能描述:跳转到img.html页面，仅供测试使用
-     * @param
-     * @return: java.lang.String
-     * @auther: 王培文
-     * @date: 2018/5/15 10:51
-     */
-    @RequestMapping(value = "img")
-    public String image(){
-        return "image";
-    }
-
-    /**
      * 功能描述:验证码生成接口
      * @param response
      * @return: byte[]
@@ -354,7 +342,7 @@ public class UserContoller {
      * @date: 2018/5/17 17:05
      */
     @ApiOperation(value = "验证码生成",httpMethod = "POST")
-    @RequestMapping(value = "/validateCode", method = RequestMethod.GET)
+    @RequestMapping(value = "/validateCode", method = RequestMethod.POST)
     @ResponseBody
     public byte[] code(HttpServletResponse response){
         //通过验证码生成工具，生成验证码
