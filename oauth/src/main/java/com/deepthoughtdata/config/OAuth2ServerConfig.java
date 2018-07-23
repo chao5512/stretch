@@ -42,7 +42,7 @@ public class OAuth2ServerConfig {
         public void configure(HttpSecurity http) throws Exception {
             http
                 .authorizeRequests()
-                    .antMatchers("/order/**").authenticated();//配置order访问控制，必须认证过后才可以访问
+                    .antMatchers("/order/**","/product/**").authenticated();//配置order访问控制，必须认证过后才可以访问
 
         }
     }
@@ -64,7 +64,7 @@ public class OAuth2ServerConfig {
 //        password 方案一：明文存储，用于测试，不能用于生产
 //        String finalSecret = "123456";
 //        password 方案二：用 BCrypt 对密码编码
-//        String finalSecret = new BCryptPasswordEncoder().encode("123456");
+//        String finalSecret = new BCryptBCryptPasswordEncoderPasswordEncoder().encode("123456");
             // password 方案三：支持多种编码，通过密码的前缀区分编码方式
             String finalSecret = "{bcrypt}"+new BCryptPasswordEncoder().encode("123456");
             //配置两个客户端,一个用于password认证一个用于client认证
