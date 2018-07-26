@@ -11,7 +11,7 @@ zuul:
       serviceId: account
     model:
       path: /model/**
-      serviceId: appmodule
+      serviceId: machflow
     dataset:
       path: /dataset/**
       serviceId: dataset
