@@ -71,8 +71,8 @@ public class UserContoller {
     @ApiOperation(value = "用户登录",httpMethod = "POST")
     @RequestMapping(value= "/login",method = RequestMethod.POST)
     @ResponseBody
-    public Result login(@RequestParam("email") String email,
-            @RequestParam("password") String password, HttpServletResponse response){
+    public Result login(@RequestParam(name="email",required = true) String email,
+            @RequestParam(name="password",required = true) String password, HttpServletResponse response){
         User user = null;
         try {
             user = userService.findByEmailAndPassword(email, password);
@@ -94,6 +94,8 @@ public class UserContoller {
             map.put("region",user.getRegion());
             map.put("birthday",user.getBirthday());
             map.put("career",user.getCareer());
+            map.put("status",user.getStatus());
+            map.put("imagePath",user.getImagePath());
             result = ResultUtil.success(map);
             System.out.println("data=" + result.getData());
             return result;
@@ -110,16 +112,16 @@ public class UserContoller {
     }
 
     //判断邮箱是否存在
-    @ApiOperation(value = "邮箱是否已注册",httpMethod = "POST")
+    @ApiOperation(value = "邮箱是否已可以注册",httpMethod = "POST")
     @RequestMapping(value = "exist",method = RequestMethod.POST)
     @ResponseBody
-    public Boolean toRegister(User user) throws Exception{
-        String email = user.getEmail();
+    public Result checkAccount(@RequestParam(name="email",required = true) String email) throws Exception{
+        Result result = null;
         if(userService.findByEmailAndStatus(email, 1L) != null){
             logger.info("该邮箱已被注册！");
-            return false;
+            return ResultUtil.success(false);
         }
-        return true;
+        return ResultUtil.success(true);
     }
 
 
@@ -129,9 +131,7 @@ public class UserContoller {
     @ResponseBody
     @Transactional
     public Result register(User user) throws Exception{
-        Map<String, Object> msg = new HashMap<>();
         String email = user.getEmail();
-        String username = user.getUsername();
         if(userService.findByEmailAndStatus(email, 1L) != null){
             logger.info("注册失败，该邮箱已被注册！");
             return ResultUtil.error(-1, "该邮箱已被注册！");
@@ -152,8 +152,8 @@ public class UserContoller {
     }
 
     //激活完成注册
-    @ApiOperation(value = "注册激活",httpMethod = "POST")
-    @RequestMapping(value = "registered",method = RequestMethod.POST)
+    @ApiOperation(value = "注册激活",httpMethod = "GET")
+    @RequestMapping(value = "registered",method = RequestMethod.GET)
     @Transactional
     @ResponseBody
     public Result registered(HttpServletRequest request, Model model){
