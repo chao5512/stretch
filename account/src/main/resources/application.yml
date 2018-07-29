@@ -20,13 +20,15 @@ spring:
   mail:
     protocol: smtp #smtp是邮件发送协议，pop3和imap是邮件接收协议。因为我们要发送邮件，因此是smtp
     host: smtp.deepthoughtdata.com #邮件发送服务器的主机，这里采用的是qq邮箱来发送邮件
-    port: 25  #邮件发送服务器的端口
     sTime: 1800000 #邮件验证码过期时间
     username: aistudioadmin@deepthoughtdata.com #邮件发送服务器的用户名
     password: Mengxin_83
     properties:
       mail:
         smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory #SSL证书Socket工厂
+            port: 465 #使用SMTP465端口
           auth: true
           starttls:
             enable: false
@@ -48,7 +50,7 @@ spring:
     cache: false
     ####### reids 配置信息#######
   redis:
-    host: localhost
+    host: 182.92.82.3
     database: 0
     port: 6379
     jedis:

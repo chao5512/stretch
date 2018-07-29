@@ -58,6 +58,9 @@ public class UserContoller {
     @Value("${spring.mail.sTime}")
     private Long sTime;
 
+    @Value("${server.ip}")
+    private String serverIP;
+
     @Autowired
     private TokenService tokenService;
 
@@ -207,7 +210,8 @@ public class UserContoller {
         if(user1 == null){
             return ResultUtil.error(-2, "该用户不存在！");
         }
-        userService.userValidate(user1,"http://localhost:8088/templates/getBack.html?email="+ user1.getEmail());
+
+        userService.userValidate(user1,"http://"+serverIP+":8097/templates/getBack.html?email="+ user1.getEmail());
         return ResultUtil.success();
     }
 
