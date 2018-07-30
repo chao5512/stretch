@@ -180,7 +180,7 @@ public class UserContoller {
     @RequestMapping(value = "getBack",method = RequestMethod.POST)
     @Transactional
     @ResponseBody
-    public Result getBack(User user,@RequestParam("code")String code,@RequestParam("uuidKey") String uuid,HttpServletRequest request){
+    public Result getBack(User user,@RequestParam("code")String code,@RequestParam("uuidKey") String uuid,@RequestParam("url") String url,HttpServletRequest request){
         logger.info("code值：" + code);
         //验证码校验
         if (uuid != null) {
@@ -211,7 +211,8 @@ public class UserContoller {
             return ResultUtil.error(-2, "该用户不存在！");
         }
 
-        userService.userValidate(user1,"http://"+serverIP+":8097/templates/getBack.html?email="+ user1.getEmail());
+        //userService.userValidate(user1,"http://"+serverIP+":8097/templates/getBack.html?email="+ user1.getEmail());
+        userService.userValidate(user1,url);
         return ResultUtil.success();
     }
 
