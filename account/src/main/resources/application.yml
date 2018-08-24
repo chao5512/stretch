@@ -1,7 +1,7 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8081/stretch/eureka/
+      defaultZone: http://localhost:8051/stretch/eureka/
 server:
   port: 8888
   ip: 182.92.82.3

@@ -15,6 +15,6 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8081/stretch/eureka/
+      defaultZone: http://localhost:8051/stretch/eureka/
   instance:
     hostname: oauth2

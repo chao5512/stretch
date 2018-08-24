@@ -6,7 +6,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8081/stretch/eureka/
+      defaultZone: http://localhost:8051/stretch/eureka/
   instance:
     preferIpAddress: true
     instance-id: ${spring.cloud.client.ipAddress}:${server.port} #自定义
