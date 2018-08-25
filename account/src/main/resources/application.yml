@@ -4,7 +4,7 @@ eureka:
       defaultZone: http://localhost:8051/stretch/eureka/
 server:
   port: 8888
-  ip: 182.92.82.3
+  ip: 47.105.127.125
 token:
   client_id: client_1
   type: client_credentials
@@ -70,11 +70,11 @@ file:
 hadoop:
   mapProps:
     defaultFs: fs.defaultFS
-    host: hdfs://182.92.82.3:9000
+    host: hdfs://47.105.127.125:9000
     defaultImagePath: /user/hadoop/default/image/001.jpg
 ####hive配置#####
 hive:
-  url: jdbc:hive2://182.92.82.3
+  url: jdbc:hive2://47.105.127
   port: 10000
   schema: default
   user: root
