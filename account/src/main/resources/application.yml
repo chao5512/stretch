@@ -10,7 +10,7 @@ token:
   type: client_credentials
   scope: select
   client_secret: 123456
-  url: http://localhost:8052/oauth/token
+  url: http://47.105.127.125:8052/oauth/token
 spring:
   application:
     name: account
