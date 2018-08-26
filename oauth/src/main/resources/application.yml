@@ -9,7 +9,7 @@ spring:
       client:
         ipAddress: localhost
   redis:
-    host: 127.0.0.1
+    host: 47.105.127.125
     database: 0
 
 eureka:

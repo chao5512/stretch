@@ -50,7 +50,7 @@ spring:
     cache: false
     ####### reids 配置信息#######
   redis:
-    host: 127.0.0.1
+    host: 47.105.127.125
     database: 0
     port: 6379
     jedis:

@@ -13,11 +13,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpClientUtil {
 
-
-
+    private final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 
     public String doPost(String url,Map<String,String> map,String charset){
         HttpClient httpClient = null;
@@ -45,6 +46,8 @@ public class HttpClientUtil {
                 }
             }
         }catch(Exception ex){
+            logger.info("get token,url:" + url);
+            logger.info("get token,param:" + map);
             ex.printStackTrace();
         }
         return result;
