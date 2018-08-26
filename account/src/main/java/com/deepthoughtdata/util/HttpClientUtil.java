@@ -24,6 +24,8 @@ public class HttpClientUtil {
         HttpClient httpClient = null;
         HttpPost httpPost = null;
         String result = null;
+        logger.info("get token,url:" + url);
+        logger.info("get token,param:" + map);
         try{
             httpClient = new SSLClient();
             httpPost = new HttpPost(url);
