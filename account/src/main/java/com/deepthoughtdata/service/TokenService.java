@@ -33,7 +33,6 @@ public class TokenService {
         createMap.put("client_id",client_id);
         createMap.put("client_secret",secret);
         createMap.put("grant_type",type);
-        createMap.put("client_secret",secret);
         String httpOrgCreateTestRtn = httpClientUtil.doPost(url,createMap,charset);
 
         JSONObject obj = JSONObject.parseObject(httpOrgCreateTestRtn);

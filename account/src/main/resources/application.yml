@@ -4,13 +4,13 @@ eureka:
       defaultZone: http://localhost:8051/stretch/eureka/
 server:
   port: 8888
-  ip: 47.105.127.125
+  ip: localhost
 token:
   client_id: client_1
   type: client_credentials
   scope: select
   client_secret: 123456
-  url: http://47.105.127.125:8052/oauth/token
+  url: http://localhost:8052/oauth/token
 spring:
   application:
     name: account
