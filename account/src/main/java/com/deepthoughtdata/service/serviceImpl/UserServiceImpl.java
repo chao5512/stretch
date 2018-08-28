@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
             helper.setFrom(mailUsername);
             helper.setTo(user.getEmail());
             helper.setSubject("用户注册（邮件主题）");
-            String strText = "尊敬的用户，您好！我是宋远迪，请点击激活链接完成邮箱激活<p><a href='"
+            String strText = "尊敬的用户，您好！这里是奥丁系统，请点击激活链接完成邮箱激活<p><a href='"
                     + link + "' target='_blank'>" + "激活账号" +"</a></p>";
             helper.setText(strText, true);
             javaMailSender.send(message);
