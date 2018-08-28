@@ -47,7 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserContoller {
     private final Logger logger = LoggerFactory.getLogger(UserContoller.class);
 
-    @Value("${server.ip}:${server.port}")
+    @Value("${spring.mail.ip}:${spring.mail.port}")
     private String mailUri;
 
     @Value("${spring.mail.sTime}")
