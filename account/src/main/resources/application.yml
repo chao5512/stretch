@@ -62,7 +62,7 @@ spring:
         max-active: 8
         max-wait: -1ms
     timeout: 2000ms
-    password:
+    password: Deepthought2018
 #172.16.31.233
 #6379
 ##自定义文件地址配置##
