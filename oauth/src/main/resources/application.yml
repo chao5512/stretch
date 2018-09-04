@@ -9,8 +9,17 @@ spring:
       client:
         ipAddress: localhost
   redis:
-    host: 47.105.127.125
-    database: 0
+      host: 47.105.127.125
+      database: 0
+      port: 6479
+      jedis:
+        pool:
+          max-idle: 8
+          min-idle: 0
+          max-active: 8
+          max-wait: -1ms
+      timeout: 2000ms
+      password: Deepthought2018
 
 eureka:
   client:
